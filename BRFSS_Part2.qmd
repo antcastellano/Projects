@@ -1,0 +1,524 @@
+---
+title: 'DTSC 650: Data Analytics In R'
+subtitle: 'CodeGrade Final Project Part 2'
+output: html_notebook
+editor_options:
+  chunk_output_type: inline
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## Student Info
+
+```         
+Name: Anthony Castellano
+Term: SP1
+Date: 2/18/2024
+```
+
+------------------------------------------------------------------------
+
+## General Instructions
+
+------------------------------------------------------------------------
+
+### Name of File
+
+Name your assignment file **`BRFSS_Part2`**.
+This is a quarto "markdown" file, which has the extension ".qmd".
+
+------------------------------------------------------------------------
+
+### Instructions
+
+For the final section, you will choose four variables to explore in ways we have not in Q1-Q9.
+You will choose one of those four variables as the response variable and the other three as predictors.
+Be sure to read through all of the instructions for Q10-Q14 before choosing your 4 variables.
+
+We expect that you will choose 4 *different* variables than those covered in Part 1, Q1-9.
+
+Feel free to create multiple variables for Q12, Q13, and Q14, e.g.
+Q12a, Q12b, etc.
+Please make it clear, though, the distinction between each question/problem with comments, spacing, and new code chunks.
+If you use Q12a, b, etc., be sure to print the results by doing Q12a or print(Q12a).
+Your answers must be clearly identifiable.
+
+Take time to tidy your code once you are finished.
+The easier it is for us to understand, the more partial credit you could receive.
+
+------------------------------------------------------------------------
+
+### Allowable packages
+
+Allowable packages are `tidyverse`, `caret`, `Hmisc`, `lsr`, `olsrr`, `psych`, `lm.beta`.
+
+-   If the allowable packages are not installed on your local computer, you'll need to do a one-time installation *from the Console Window in RStudio* for each package like this:
+
+    **`install.packages('<package name>')`**
+
+    *Do not attempt to install packages in code that you submit to CodeGrade.*
+
+-   Note: installing the entire tidyverse with `install.packages('tidyverse')` from the Console Window will save you from having to install any of the tidyverse's individual packages in the future.
+
+-   In your code, load the package's library like this: **`library(<library name>)`**
+
+------------------------------------------------------------------------
+
+### Do / Do not
+
+-   Do use tidyverse functions (e.g., dplyr verbs) for all of the questions where possible.
+
+-   Do use The Pipe.
+
+-   Do use plenty of comments throughout your code chunks so that the grader can follow your line of thinking.
+
+-   Do use the "Q Discussion:" sections provided to explain your thinking and to answer the questions.
+
+-   Do not rearrange data frame outputs unless specified by the question instructions.
+
+-   Do not create multiple copies of the BRFSS dataset in your script.
+    Creating too many copies of the dataset can cause CodeGrade to crash with *exit code -9*.
+    If you see that error on your Practice Submission, please check for this.
+
+-   Do have integrity and submit your own work, not the work of a classmate, an online resource, or someone else.
+
+------------------------------------------------------------------------
+
+### Submission
+
+You only have ONE ATTEMPT to submit Part 2 to the ACTUAL submission link!
+On all the other assignments, you got multiple attempts; but not on this assignment.
+
+Ensure you are ready and confident in your work before submitting.
+
+------------------------------------------------------------------------
+
+### Data Set
+
+-   These data come from [Kaggle](https://www.kaggle.com/cdc/behavioral-risk-factor-surveillance-system).
+
+-   To answer these questions you will need to use the codebook on Brightspace, called `codebook15_llcp.pdf`.
+    Please note that not all of the variables listed in the codebook are included in the .csv file to be downloaded from Brightspace.
+
+-   Download the `BRFSS2015_650.csv` file from Brightspace and place it in the same folder/directory as your script file.
+    Then in RStudio, set your Working Directory to your Source File location: in the menus choose Session, Set Working Directory, To Source File Location.
+    You most likely will see some warnings after it loads due to the fact that `read_csv()` will try to guess the column type but because there are so many rows it won't read enough of them to accurately make a guess.
+
+-   You must use the `read_csv()` function when loading the .csv file.
+    Do not use `read.csv()`.
+
+-   Do not rename the .csv file that you download from Brightspace.
+
+-   Do not edit the .csv file.
+
+------------------------------------------------------------------------
+
+### Pipe Notation
+
+You may use the `tidyverse` pipe **`%>%`** or the new base R pipe **`|>`**.
+For a comparison, see [here](https://www.tidyverse.org/blog/2023/04/base-vs-magrittr-pipe/).
+
+You are expected to use pipe notation in all of the CodeGrade assignments.
+Although there are alternate ways to filter, subset, and summarize data sets, using the pipe creates more readable code and is an important skill to develop.
+
+------------------------------------------------------------------------
+
+### Comments vs. Discussion
+
+You should include both comments within your code chunk as well a discussion after each coded answer.
+Comments explain your code and your thought process; the discussion uses your code to answer the questions we've asked.
+We have provided "Q Discussion" sections for each question.
+Feel free to add more lines in the discussion section.
+
+You can also use markdown headers to organize your discussion and the outline.
+For more info on markdown, see [here](https://rmarkdown.rstudio.com/authoring_basics.html)
+
+------------------------------------------------------------------------
+
+## Questions and Coded Solutions
+
+------------------------------------------------------------------------
+
+### Preliminaries
+
+```{r}
+### It's always a good idea when working in RStudio to start with a clean environment. 
+
+### Clear objects from the environment memory that may be leftover from previous versions of your code or other assignments by running the following line:
+rm(list = ls())
+
+### Load the libraries you need
+
+library(tidyverse) 
+
+
+
+
+
+### Load the Data
+### Load the data file
+### Do not change this line
+brf <- read_csv("BRFSS2015_650.csv")
+
+```
+
+------------------------------------------------------------------------
+
+## Questions
+
+------------------------------------------------------------------------
+
+### Q10
+
+Address the values of each of the variables (use the codebook for this and include your answer as comments).
+For instance, is "none" equal to a value other than 0?
+Are there extra decimals implied?
+Are there other values that should be excluded based on the responses they represent?
+Which variable will you seek to predict from the other variables?
+Answer these questions in the *Q10 Discussion:* section below the code chunk.
+Update the dataset to account for these values for the remainder of the questions in this part.
+
+```{r}
+### Do not edit the following line. It is used by CodeGrade.
+# CG Q10 # 
+
+### TYPE YOUR CODE BELOW ###
+
+Q10 <- brf |>
+  mutate(SCNTLWK1 = replace(SCNTLWK1, SCNTLWK1 == 98, 0),
+         CIMEMLOS = replace(CIMEMLOS, CIMEMLOS == 1, 0),
+         CIMEMLOS = replace(CIMEMLOS, CIMEMLOS == 2, 1),
+         ADDEPEV2 = replace(ADDEPEV2, ADDEPEV2 == 1, 0),
+         ADDEPEV2 = replace(ADDEPEV2, ADDEPEV2 == 2, 1)) |> #change 98 to 0 in the SCNTLWK1, changed 1 to 0 and 2 to 1 for CIMEMLOS and ADDEPEV2 variables
+  filter(CIMEMLOS != 7 & CIMEMLOS != 9 & !is.na(CIMEMLOS) & ADDEPEV2 != 7 & ADDEPEV2 != 9 & !is.na(ADDEPEV2) & SCNTLWK1 != 97 & SCNTLWK1 != 99 & !is.na(SCNTLWK1) & GENHLTH != 7 & GENHLTH != 9 & !is.na(GENHLTH)) |> # removing any unwanted variables from the dataset
+  select(SCNTLWK1, CIMEMLOS, GENHLTH, ADDEPEV2) |> #selecting only the columns that I need from the base dataframe
+  as.data.frame()
+
+  
+Q10
+
+
+
+
+```
+
+### Q10 Discussion:
+
+Your Q10 discussion goes here.
+Feel free to add more lines as needed.
+
+CIMEMLOS use 1 and 2 to represent yes/no.
+7 is used to represent "I don't know" and 9 is used to represent someone who refused to answer.
+7 and 9 as well as blanks (N/A) had to be removed from the variable.
+1 was changed to 0 and 2 was changed to 1 in order for it be used in a logistic model.
+
+The ADDEPEV2 variable uses 1 and 2 to represent yes/no and 7 and 9 to represent "I don't know" and a refusal to answer, but the Code Book did not include if there were any blanks within the variable.
+I chose to remove any possible N/A values from the variable in case there are some that the code book did not account for.
+1 was changed to 0 and 2 was changed to 1 in order for it be used in a logistic model.
+
+The GENHLTH variable uses a 1-5 scale to represent how a patients general health is with 1 being excellent and 5 representing poor health.
+A 7 represents "I don't know" and 9 represents a patient refusing to answer.
+7 and 9 as well as blanks (N/A) had to be removed from the variable.
+
+The SCNTLWK1 variable contains values from 1-96 to represent the amount of hours someone worked in a week.
+0 hours in a week is represented as 98, so that was changed to 0 using the mutate and replace functions.
+97 was used to represent "I don't know" and 99 was used to represent people who refused to answer.
+97, 99, and blanks (N/A) were removed from the variable.
+
+All values that were removed from the variables were removed using the filter function.
+
+The variable I seek to predict is the GENHLTH variable.
+
+### Q11
+
+Remove any outliers for each applicable variable.
+Make sure you are updating the dataset from Q10 and using this dataset for the remainder of the questions.
+Briefly explain why you chose the method you used in the *Q11 Discussion* section.
+Within your code chunk, provide comments explaining what your code is doing.
+
+```{r}
+### Do not edit the following line. It is used by CodeGrade.
+# CG Q11 # 
+
+### TYPE YOUR CODE BELOW ###
+
+#Summary and boxplot of Variable
+variable_sum <- summary(Q10$SCNTLWK1)
+variable_sum
+bplot1 <- Q10 |>
+  ggplot(aes(x = SCNTLWK1)) +
+  geom_boxplot()
+
+bplot1
+num_rows <- nrow(Q10)
+
+
+barplot1 <- Q10 |>
+  ggplot(aes(x = SCNTLWK1)) +
+  geom_bar()
+
+barplot1
+
+#1.5IQR Rule
+upper_fence <- quantile(Q10$SCNTLWK1, .75, na.rm = TRUE) + (1.5 * IQR(Q10$SCNTLWK1, na.rm = TRUE))
+lower_fence <- quantile(Q10$SCNTLWK1, .25, na.rm = TRUE) - (1.5 * IQR(Q10$SCNTLWK1, na.rm = TRUE))
+
+
+Q10b <- Q10 |>
+  filter(
+   SCNTLWK1 >= lower_fence,
+   SCNTLWK1 <= upper_fence
+  )
+bplot2 <- Q10b |>
+  ggplot(aes(x = SCNTLWK1)) +
+  geom_boxplot()
+
+bplot2 
+
+num_rows2 <- nrow(Q10b)
+
+#3SD Rule
+upper_bound <- quantile(Q10$SCNTLWK1, .9985, na.rm = TRUE)
+lower_bound <- quantile(Q10$SCNTLWK1, .0015, na.rm = TRUE)
+
+Q10c <- Q10 |>
+  filter(
+   SCNTLWK1 >= lower_bound,
+   SCNTLWK1 <= upper_bound
+  )
+
+bplot3 <- Q10c |>
+  ggplot(aes(x = SCNTLWK1)) +
+  geom_boxplot()
+
+bplot3
+
+num_rows3 <- nrow(Q10c)
+
+num_rows
+num_rows2
+num_rows3
+
+Q11 <- Q10c
+
+```
+
+### Q11 Discussion:
+
+Your Q11 discussion goes here.
+Feel free to add more lines as needed.
+Out of the four variables I chose to use for my model, SCNTLWK1 is the only variable that would have potential outliers because the other 3 variables only contain the values from 1 through 5.I first tried the 1.5IQR rule to remove any outliers, but it ended up removing 7,471 lines from the data set.
+I then tried the 3SD rule to remove any outliers and no lines were removed.
+After looking at the summary and a barplot for the variable and reflecting on what the variable represented I concluded that the variable didn't have any outliers because most people work approximatley 40 hours a week and the people who worked 0 hours in a week are significant for the model.
+
+### Q12
+
+Complete exploratory analyses (for each variable) doing appropriate visualizations with ggplot2.
+Include visualizations that incorporate a combination of your variables within one plot.
+Provide an organized discussion of your observations for each of the plots in the *Q12 Discussion* section below.
+
+```{r}
+### Do not edit the following line. It is used by CodeGrade.
+# CG Q12 # 
+
+### TYPE YOUR CODE BELOW ###
+#Bar chart for SCNTLWK1
+Q12a <- Q11 |>
+  ggplot(aes(x = SCNTLWK1)) +
+  geom_bar()
+
+Q12a
+
+#Bar chart for ADDEPEV2
+Q12b <- Q11 |>
+  ggplot(aes(x = ADDEPEV2)) +
+  geom_bar()
+
+Q12b
+#Bar chart for GEHHLTH
+Q12c <- Q11 |>
+  ggplot(aes(x = GENHLTH)) +
+  geom_bar()
+
+Q12c
+#Box plot for SCNTLWK1 based on if someone had cognitive decline
+Q11$CIMEMLOS <- as.factor(Q11$CIMEMLOS)
+Q12d <- Q11 |>
+  ggplot(aes(y = SCNTLWK1, x = CIMEMLOS)) +
+  geom_boxplot()
+
+Q12d
+
+
+Q11$ADDEPEV2 <- as.factor(Q11$ADDEPEV2)
+Q11$GENHLTH <- as.factor(Q11$GENHLTH)
+#Box plot for SCNTLWK1 based on General Health scores
+Q12e <- Q11 |>
+  ggplot(aes(y = SCNTLWK1, x = GENHLTH)) +
+  geom_boxplot()
+
+Q12e
+
+#Box plot for SCNTLWK1 based on if someone had a depressive disorder
+Q12f <- Q11 |>
+  ggplot(aes(y = SCNTLWK1, x = ADDEPEV2)) +
+  geom_violin()
+
+Q12f
+
+
+
+```
+
+### Q12 Discussion:
+
+Your Q12 discussion goes here.
+Feel free to add more lines as needed.
+
+For Q12a I created a bar chart to show the frequency of how often each value appears for SCNTLWK1.
+This chart shows that most people work 40 hours in a week.
+
+For Q12b I created a bar chart to visualize how many people said they were depressed vs. not depressed.This chart shows that most people said they were not depressed.
+
+For Q12c I created a bar chart to visualize the frequency of how said their general health is.
+Based on the chart most people rate their general health as good.
+
+For Q12d I made a boxplot to show how people who do and do not have cognitive decline are distributed based on how many hours they work in a week.This chart shows that the people with memory loss tend to work more hours then people without memory loss.
+
+For Q12e I made a boxplot to show the how people rated their general health is distributed based on how many hours they work in a week.This chart shows that people who rated themselves as having good general health have a wider range of time worked throughout the week outside of the IQR.
+
+For Q12f I made a violin chart to show the how people who have been told they do or do not have  depression disorder are distributed based on how many hours they work in a week.
+This chart shows that people who have been diagnosed with a depressive disorder work around 40 hours a week and not exactly 40 hours compared to people who do not have a depressive disorder.
+
+### Q13
+
+Run all of the appropriate basic descriptive statistics for each of your variables.
+What do these statistics reveal?
+Be sure to address each variable in the "Q13 Discussion" below.
+
+```{r}
+### Do not edit the following line. It is used by CodeGrade.
+# CG Q13 # 
+
+### TYPE YOUR CODE BELOW ###
+
+#Summary for SCNTLWK1
+Q13a <- summary(Q10$SCNTLWK1)
+Q13a
+
+#Standard deviation for SCNTLWK1
+Q13b <- round(sd(Q10$SCNTLWK1), 2)
+Q13b
+
+#Correlation table for all variables in the dataframe
+Q13c <- round(cor(Q10), 2)
+Q13c
+
+#Table for GENHLTH and CIMEMLOS
+Q13d <- table(Q10$GENHLTH, Q10$CIMEMLOS)
+Q13d
+
+#Table for SCNTLWK1
+Q13e <-table(Q10$SCNTLWK1)
+Q13e
+
+```
+
+### Q13 Discussion:
+
+Your Q13 discussion goes here.
+Feel free to add more lines as needed.
+
+Q13a is a summary of the SCNTLWK1 variable and it shows that mos people work around 40 hours in a week and based off of the table that was made from Q13e, if someone didn't work 40 hours in a week the majority of them worked either 0, 50, or 60 hours in a week.
+
+Q13b shows the standard deviation for the SCNTLWK1 variable to be 15.73 which shows that people tend to work 15.73 hours more or less then the mean of 39.32 hours in a week.
+
+Q13c is a correlation table for the dataframe.
+Based on the table, none of the variables have a significant correlation towards each other. GENHTLH and SCNTLWK1 have zero correlation. Two pairs of variables with the highest correlation towards each other are CIMEMLOS with ADDEPEV2 at .29 and GENHLTH with CIMEMLOS at -.27 which are not a great correlations.
+
+Q13d is a table for the variables GENHLTH and CIMEMLOS.It shows that people who rate themselves as having fair health are more likely to have memory loss.
+
+### Q14
+
+Finally, run at least 2 different, appropriate regressions predicting the variable you indicated in Q10.
+These regressions should use different predictor(s).
+Organize and explain your code within the code chunk using comments.
+Identify the best model and provide a discussion of your observations in the *Q14 Discussion* section provided below.
+Be organized and detailed in your discussion.
+
+```{r}
+### Do not edit the following line. It is used by CodeGrade.
+# CG Q14 # 
+
+### TYPE YOUR CODE BELOW ###
+#Linear regression to predict General Health using Cognitive Decline, Hours Worked per week, and Diagnosis of Depression Disorder
+data1 <- lm(GENHLTH ~ CIMEMLOS + SCNTLWK1 + ADDEPEV2, data = Q10)
+
+#Summary of the linear regression
+Q14a <- round(summary(data1)$coefficients, 2)
+
+Q14a
+#Linear regression to predict General Health using Cognitive Decline and Diagnosis of Depressive Disorder
+data2 <- lm(GENHLTH ~ CIMEMLOS + ADDEPEV2, data = Q10)
+
+#Summary of the linear regression
+Q14b <- round(summary(data2)$coefficients, 2)
+
+Q14b
+
+#Linear regression to predict General Health using Hours Worked per week and Diagnosis of Depressive Disorder
+data3 <- lm(GENHLTH ~ SCNTLWK1 + ADDEPEV2, data = Q10)
+
+Q14c <- round(summary(data3)$coefficients, 2)
+
+Q14c
+
+#Logistic regression for GENHLTH predicting CIMEMLOS
+
+data4 <- glm(CIMEMLOS ~ GENHLTH, binomial(), data = Q10)
+Q14d <-round(summary(data4)$coefficients, 2)
+Q14d
+
+
+
+```
+
+### Q14 Discussion:
+
+Your Q14 discussion goes here.
+Feel free to add more lines as needed.
+
+With the first linear model represented by Q14a, all of the intercepts have a P-value of 0 besides SCNTWK1 that has a value of 0.74.
+That means that CIMEMLOS and ADDEPEV2 can be used to accurately predict GENHLTH.
+
+The second linear model represented by Q14b had CIMEMLOS and ADDEPEV2 to predict GENHLTH.
+The standard error for the intercepts are low and the P-values are all 0 which means we can reject the null hypothesis and that the model can strongly predict GENHLTH.
+
+The third linear model represented by Q14c used SCNTLWK1 and ADDEPEV2 to predict GENHLTH.
+The standard error for the model is low, but SCNTWK1 has a P-value greater than 0.5 which means that the null hypothesis can't be rejected. The independent variable SCNTWK1 cannot accurately predict the dependent variable GENHELTH.
+
+The fourth model represented by Q14d is a logistic model predicting CIMEMLOS based on GENHLTH.
+With low standard errors and P-values of 0, a conclusion can be made that GENHLTH is a good predictor of CIMEMLOS.
+
+The best model to predict GENHLTH is the model represented by Q14b.
+All of the intercepts have a P-value of zero and the standard errors are low.
+
+------------------------------------------------------------------------
+
+# Before submitting to Code Grade:
+
+1)  Clear objects from your environment.
+    Click the broom in the Environment pane in the top right.
+    This will erase any variables (like Q1, Q2) that you've stored.
+
+2)  Rerun all your code.
+    You can click the "Run" option above in this script pane (top right of notebook), then select "Run all".
+    You should have all the variables stored again in the environment pane, and you should see no red error messages in the console below.
+
+3)  **Important**: You only have ONE ATTEMPT to submit Part 2 to the ACTUAL submission link!
+    Ensure you are ready and confident in your work before submitting.
+
+4)  Reread all the directions and questions and make sure you addressed each part carefully, clearly, and thoughtfully.
+
+------------------------------------------------------------------------
